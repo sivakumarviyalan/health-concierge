@@ -1,5 +1,7 @@
 # 🏥 Health Concierge — ADK Capstone 2026
 
+![Cover Banner](assets/cover_banner.png)
+
 > **Track:** Concierge Agents · **Project:** `health-concierge`
 > An AI-powered personal health assistant built with **Google Agent Development Kit (ADK) 2.0**,
 > featuring a multi-agent workflow, MCP tool integration, security checkpointing, and
@@ -18,6 +20,8 @@
 ---
 
 ## 🏗️ Architecture
+
+![Architecture Diagram](assets/architecture_diagram.png)
 
 ```
 User Input
