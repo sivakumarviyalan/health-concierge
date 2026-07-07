@@ -17,9 +17,53 @@ The **Health Concierge** addresses these challenges by providing:
 
 ---
 
-## 2. Solution Architecture
-
 The application is structured as a hierarchical multi-agent workflow directed by a security gate and a keyword router.
+
+```mermaid
+flowchart TD
+    Start([User Input]) --> SecCheck[security_checkpoint Node]
+    
+    %% Security Checkpoint Conditional Route
+    SecCheck -- SECURITY_EVENT --> SecAlert[security_alert Node]
+    SecCheck -- __DEFAULT__ --> Orch[orchestrator LLM Agent]
+    
+    %% Orchestrator Sub-Agent Delegation
+    Orch -.->|AgentTool| Nutri[nutrition_agent]
+    Orch -.->|AgentTool| Fit[fitness_agent]
+    
+    Nutri -->|fetch_nutritional_data| NutriTool([Nutritional DB Tool])
+    Fit -->|calculate_bmi / log_activity| FitTools([Fitness & BMI Tools])
+    
+    %% Specialists response flows back to Orchestrator
+    NutriTool -.-> Nutri -.-> Orch
+    FitTools -.-> Fit -.-> Orch
+    
+    %% Orchestrator Output to Router Node
+    Orch --> Router[orchestrator_router Node]
+    
+    %% Router Conditional Route
+    Router -- schedule --> HITL[schedule_reminder_node HITL]
+    Router -- __DEFAULT__ --> Final[final_output Node]
+    
+    %% Human-in-the-Loop Interaction
+    HITL -->|RequestInput confirmation request| Pause[Playground Pause]
+    Pause -->|User Confirms yes/no| HITL
+    HITL --> Final
+    
+    %% Final Outputs
+    SecAlert --> Final
+    Final --> End([Final Output Response])
+
+    classDef security fill:#f96,stroke:#333,stroke-width:2px;
+    classDef agent fill:#85C1E9,stroke:#333,stroke-width:2px;
+    classDef hitl fill:#D7BDE2,stroke:#333,stroke-width:2px;
+    classDef tool fill:#ABEBC6,stroke:#333,stroke-width:2px;
+    
+    class SecCheck,SecAlert security;
+    class Orch,Nutri,Fit agent;
+    class HITL,Pause hitl;
+    class NutriTool,FitTools tool;
+```
 
 ![Architecture Diagram](assets/architecture_diagram.png)
 
